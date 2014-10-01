@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Adapted from code by Wayne Dyck
+# Adapted from code by Wayne Dyck and Chris Veness
 
 import math
 
@@ -41,7 +41,8 @@ def distance(origin, destination):
 def ini_bearing(origin, destination):
     [lat1, lon1, lat2, lon2] = unpack(origin, destination)
     y = math.sin(lon2-lon1) * math.cos(lat2)
-    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(lon2-lon1)
+    x = math.cos(lat1) * math.sin(lat2) - \
+        math.sin(lat1) * math.cos(lat2) * math.cos(lon2-lon1)
     brng = math.atan2(y, x) # radians
-    return brng
+    return (math.degrees(brng) + 360) % 360
 
