@@ -46,3 +46,6 @@ def ini_bearing(origin, destination):
     brng = math.atan2(y, x) # radians
     return (math.degrees(brng) + 360) % 360
 
+def fin_bearing(origin, destination):
+    return (ini_bearing(destination, origin) + 180) % 360
+
