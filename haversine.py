@@ -24,20 +24,16 @@ def unpack(origin, destination):
         pass
     else:
         assert 1==0
-    return [lat_d1, lon_d1, lat_d2, lon_d2]
+    return [math.radians(lat_d1), math.radians(lon_d1), math.radians(lat_d2), math.radians(lon_d2)]
 
 def distance(origin, destination):
     [lat1, lon1, lat2, lon2] = unpack(origin, destination)
     radius = km
-    dlat = math.radians(lat2-lat1)
-    dlon = math.radians(lon2-lon1)
-    lat1 = math.radians(lat1)
-    lon1 = math.radians(lon1)
-    lat2 = math.radians(lat2)
-    lon2 = math.radians(lon2)
+    dlat = lat2-lat1
+    dlon = lon2-lon1
 
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) \
-        * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(lat1) \
+        * math.cos(lat2) * math.sin(dlon/2) * math.sin(dlon/2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d = radius * c
     return d
