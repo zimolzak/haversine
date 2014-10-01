@@ -14,17 +14,31 @@ olympia = [47.041917, -122.893766]
 def unpack(origin, destination):
     if len(origin) == 2:
         lat_d1, lon_d1 = origin
-    elif len(origin) == 3:
-        pass
+    elif len(origin) == 6:
+        xd, xm, xs, yd, ym, ys = origin
+        lat_d1 = dms_dd(xd, xm, xs)
+        lon_d1 = dms_dd(yd, ym, ys)
     else:
         assert 1==0
     if len(destination) == 2:
         lat_d2, lon_d2 = destination
-    elif len(destination) == 3:
-        pass
+    elif len(destination) == 6:
+        xd, xm, xs, yd, ym, ys = destination
+        lat_d2 = dms_dd(xd, xm, xs)
+        lon_d2 = dms_dd(yd, ym, ys)
     else:
         assert 1==0
-    return [math.radians(lat_d1), math.radians(lon_d1), math.radians(lat_d2), math.radians(lon_d2)]
+    return [math.radians(lat_d1), math.radians(lon_d1), math.radians(lat_d2), \
+                math.radians(lon_d2)]
+
+def dms_dd(d, m, s):
+    if d != 0:
+        sign = abs(d) / d
+    else: # FIXME this would fail on negative zero
+        sign = 1
+    m = m * sign
+    s = s * sign
+    return d + float(m)/60 + float(s)/3600
 
 def distance(origin, destination):
     [lat1, lon1, lat2, lon2] = unpack(origin, destination)
@@ -49,3 +63,19 @@ def ini_bearing(origin, destination):
 def fin_bearing(origin, destination):
     return (ini_bearing(destination, origin) + 180) % 360
 
+assert round(distance(seattle, olympia),2) == 76.39
+assert dms_dd(1, 30, 0) == 1.5
+assert dms_dd(0, 30, 0) == 0.5
+assert dms_dd(-45, 30, 0) == -45.5
+boat = [36, 8, 12, -13, 5, 7] # 36N8'12" 13W5'7"
+gibr = [35, 58, 35, -5, 28, 37] # gibraltar
+
+assert round(distance(boat,gibr), 1) == 684.0
+assert round(ini_bearing(boat,gibr),2) == round(dms_dd(89, 14, 57),2)
+assert round(fin_bearing(boat,gibr),2) == round(dms_dd(93, 43, 54),2)
+
+vi = [36, 8, 12, -13, 5, 7]
+vo = [35, 58, 35, -5, 28, 37]
+print "Distance:\t\t" , round(distance(vi,vo),2)
+print "Initial bearing:\t", round(ini_bearing(vi,vo),1)
+print "Final bearing:\t\t", round(fin_bearing(vi,vo),1)
