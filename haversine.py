@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
-# Adapted from code by Wayne Dyck and Chris Veness
-
 import math
 
 km = 6371.009
 mi = 3958.761
 nm = 3440.07
 
-seattle = [47.621800, -122.350326]
-olympia = [47.041917, -122.893766]
+radius = nm
 
 def unpack(origin, destination):
     if len(origin) == 2:
@@ -41,8 +38,8 @@ def dms_dd(d, m, s):
     return d + float(m)/60 + float(s)/3600
 
 def distance(origin, destination):
+    # Adapted from code by Wayne Dyck, 2009-10-05
     [lat1, lon1, lat2, lon2] = unpack(origin, destination)
-    radius = km
     dlat = lat2-lat1
     dlon = lon2-lon1
 
@@ -53,29 +50,49 @@ def distance(origin, destination):
     return d
 
 def ini_bearing(origin, destination):
+    # Adapted from code by Chris Veness
+    # github.com/chrisveness/geodesy file latlon.js
     [lat1, lon1, lat2, lon2] = unpack(origin, destination)
     y = math.sin(lon2-lon1) * math.cos(lat2)
     x = math.cos(lat1) * math.sin(lat2) - \
         math.sin(lat1) * math.cos(lat2) * math.cos(lon2-lon1)
-    brng = math.atan2(y, x) # radians
+    brng = math.atan2(y, x)
     return (math.degrees(brng) + 360) % 360
 
 def fin_bearing(origin, destination):
+    # Adapted from code by Chris Veness
     return (ini_bearing(destination, origin) + 180) % 360
 
+### tests
+
+rold = radius
+radius = km
+
+seattle = [47.621800, -122.350326]
+olympia = [47.041917, -122.893766]
 assert round(distance(seattle, olympia),2) == 76.39
 assert dms_dd(1, 30, 0) == 1.5
 assert dms_dd(0, 30, 0) == 0.5
 assert dms_dd(-45, 30, 0) == -45.5
 boat = [36, 8, 12, -13, 5, 7] # 36N8'12" 13W5'7"
 gibr = [35, 58, 35, -5, 28, 37] # gibraltar
-
 assert round(distance(boat,gibr), 1) == 684.0
 assert round(ini_bearing(boat,gibr),2) == round(dms_dd(89, 14, 57),2)
 assert round(fin_bearing(boat,gibr),2) == round(dms_dd(93, 43, 54),2)
 
+radius = rold
+
+### end tests
+
+if radius == km:
+    unit = "km"
+elif radius == nm:
+    unit = "nm"
+elif radius == mi:
+    unit = "mi"
+
 vi = [36, 8, 12, -13, 5, 7]
 vo = [35, 58, 35, -5, 28, 37]
-print "Distance:\t\t" , round(distance(vi,vo),2)
+print "Distance:\t\t" , round(distance(vi,vo),2), unit
 print "Initial bearing:\t", round(ini_bearing(vi,vo),1)
 print "Final bearing:\t\t", round(fin_bearing(vi,vo),1)
