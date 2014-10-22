@@ -91,8 +91,8 @@ elif radius == nm:
 elif radius == mi:
     unit = "mi"
 
-vi = [36, 8, 12, -13, 5, 7]
-vo = [35, 58, 35, -5, 28, 37]
+vi = [17, 46, 52, -20, 13, 23] # near cape verde
+vo = [-3, 50, 59, -32, 34, 15] # fernando de noronha
 print "Distance:\t\t" , round(distance(vi,vo),2), unit
 print "Initial bearing:\t", round(ini_bearing(vi,vo),1)
 print "Final bearing:\t\t", round(fin_bearing(vi,vo),1)
